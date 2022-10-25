@@ -21,10 +21,22 @@ G20 %>%
 
 
 
-#####
+####
 
 G20 %>% 
   ggplot(aes(area = Contig_Len, fill = Genome_Name, subgroup = Genome_Name)) +
   geom_treemap(show.legend = FALSE) +
   geom_treemap_subgroup_border(colour = "white", size = 5) +
   scale_fill_brewer(palette = "Set3")
+
+
+####
+
+library(treemap)
+
+G20 %>%
+  slice(rep(c(1:20), 50)) %>%
+  mutate(id = row_number()) %>%
+  treemap(index=c("region","id"),
+          vSize = "gdp_mil_usd",
+          type = "index")

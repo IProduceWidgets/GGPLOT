@@ -1,0 +1,99 @@
+---
+title: "ridgeplot"
+output:
+  pdf_document: default
+  html_document: default
+date: "2022-10-14"
+urlcolor: blue
+linkcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load and/or install packages.
+
+In RStudio Cloud projects, I have already installed these packages. This
+code block checks if a package is installed. If installed, it will load
+it (library), if not it will install the package and load it. This
+ensures that if you download this code to your local machine, it should
+still run.
+
+```{r setup, message = FALSE, warning = FALSE}
+## If a package is installed, it will be loaded. If any 
+## are not, the missing package(s) will be installed 
+## from CRAN and then loaded.
+
+## First specify the packages of interest
+packages = c("tidyverse",
+             "googlesheets4",
+             "viridis",
+             "ggridges")
+
+## Now load or install&load all
+package.check <- lapply(
+  packages,
+  FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+    }
+  }
+)
+
+```
+
+## Load in the data from Google Sheets
+
+This section of code loads the required packages (using the library
+function), then loads in your dataset.
+
+The data are also reshaped from "wide" to "long". This is the preferred
+format for functions/packages within the "tidyverse", which the
+ridgeline visualization package (ggridges) relies on.
+
+```{r loadData, tidy = TRUE}
+# Paste your link next to the variable "sheetLink <-" below. 
+# Make sure your link is in "quotation marks"
+sheetLink <- "https://docs.google.com/spreadsheets/d/1B_bFfEVHuo5Vpkaa_FnlyFu0WLL-Gm8ldBhL8gxQ720/edit#gid=0"
+
+gs4_deauth()
+vocab.data <- read_sheet(sheetLink)
+
+```
+
+## Tidy data into format needed for ggridges plot.
+
+```{r tidyData}
+vocab.data <- vocab.data %>% 
+  gather(key="text", value="value") %>%
+  mutate(text = gsub("\\.", " ",text)) %>%
+  mutate(value = round(as.numeric(value),0))
+```
+
+## Make the ridgeline plot.
+
+See the [ggridges package homepage](https://wilkelab.org/ggridges/),
+[vignette](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html),
+and [reference
+manual](https://wilkelab.org/ggridges/reference/index.html) to look into
+changing parameters to best visualize your data. In this plot, I am
+using the settings from the tutorial as a starting point.
+
+```{r ridgelinePlot}
+vocab.data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(y=text, x=value,  fill=text)) +
+    geom_density_ridges(alpha=0.6, bandwidth=4) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    theme_ridges() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
