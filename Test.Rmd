@@ -1,18 +1,51 @@
-### This is a script that checks the validity of Kynetec Data 
-# brand ownership tranformations recieved from coauthors.
+---
+title: "GPT - Self Documenting Code Test"
+author: "Avery Dobbins"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Run a data exploration script, and see if we cna get chatGPT to describe what it does for us.
+
+```{r, echo=FALSE}
 # load packages
 require(tidyverse)
 require(dplyr)
 require(haven)
 require(readxl)
+```
 
+```{r}
 # load data ####
-
 Corn <- read_dta("C:\\Users\\avery\\Downloads\\corn_kynetec_data.dta")
 Soy <- read_dta("C:\\Users\\avery\\Downloads\\soy_kynetec_data.dta")
+```
 
-
+```{r}
 # Data Cleaning for comparisons #####
 # cut down the data to just what is needed to evaluate the recieved code.
 # Add crop var, Add uid var
@@ -46,7 +79,9 @@ Soy_Cut <- Soy %>%
     OrigcompanyparentFactor = as_factor(CompanyParent) # Shows the company parent name
   ) %>%
   write_dta(path = "C:\\Users\\avery\\Downloads\\CUT_soy_kynetec_data.dta")
+```
 
+```{r}
 # Load New Data from Ed.P #####
 #Corn
 Corn_Mask_EdP <- read_dta("C:\\Users\\avery\\Downloads\\Corn_Mask_EdP.dta") %>%
@@ -73,7 +108,9 @@ Soy_Mask_EdP <- read_dta("C:\\Users\\avery\\Downloads\\Soy_Mask_EdP.dta") %>%
          orig_comp
          ) %>%
   unique()
+```
 
+```{r}
 # Load Phil Howard Data #####
 
 PH_SalesData <- read_xls(
@@ -99,8 +136,8 @@ for (i in 1:N){
     }
   }
 }
+```
 
-# Replace company parent values according to previous masks (minding year) #####
+```{r}
 
-# Plot (History Flow?) Kynetec, EdP, and PH to see changes #####
-# in both number of brands, and % of brands
+```
